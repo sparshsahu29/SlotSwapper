@@ -2,18 +2,24 @@ import { format, parseISO, isValid } from 'date-fns';
 
 /**
  * Safely parses a date string or object into a valid Date instance.
- * Handles standard ISO, timezone offsets (+05:30), and raw date objects.
+ * Handles standard ISO, timezone offsets (+05:30), and sanitizes malformed backend dates.
  */
 const safeParseDate = (dateVal) => {
   if (!dateVal) return null;
   if (dateVal instanceof Date) return dateVal;
   
-  // Try native parsing first as it's more resilient with modern timezone offsets
-  const nativeParsed = new Date(dateVal);
+  // 1. SANITIZE: Strip rogue 'Z' if it follows a timezone offset (e.g., +05:30Z -> +05:30)
+  let cleanVal = dateVal;
+  if (typeof dateVal === 'string') {
+    cleanVal = dateVal.replace(/([+-]\d{2}:\d{2})Z$/, '$1');
+  }
+  
+  // 2. Try native parsing first as it's more resilient with modern timezone offsets
+  const nativeParsed = new Date(cleanVal);
   if (!isNaN(nativeParsed.getTime())) return nativeParsed;
   
-  // Fallback to date-fns parseISO
-  return typeof dateVal === 'string' ? parseISO(dateVal) : new Date(dateVal);
+  // 3. Fallback to date-fns parseISO
+  return typeof cleanVal === 'string' ? parseISO(cleanVal) : new Date(cleanVal);
 };
 
 /**

@@ -3,14 +3,16 @@ import { ArrowLeftRight, Check, X, Calendar, User } from 'lucide-react';
 import { formatEventRange } from '../../utils/dateUtils';
 
 export const IncomingRequest = ({ request, onRespond }) => {
+  
   const [isAccepting, setIsAccepting] = useState(false);
   const [isRejecting, setIsRejecting] = useState(false);
 
   const requesterName = request.requester_name || request.requester?.name || 'Peer User';
   
-  const requesterSlot = request.requester_slot || request.requester_event || {};
-  const responderSlot = request.responder_slot || request.responder_event || {};
-
+  // Map to the correct backend keys revealed by your console debug log
+  const requesterSlot = request.their_slot || request.offered_slot || {};
+  const responderSlot = request.my_slot || request.target_slot || {};
+  
   const handleResponse = async (accepted) => {
     if (accepted) {
       setIsAccepting(true);
