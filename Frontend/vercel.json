@@ -1,9 +1,12 @@
 {
-  "cleanUrls": true,
-  "rewrites": [
+  "routes": [
     {
-      "source": "/((?!favicon\\.png|favicon\\.ico|assets/|.*\\..*$).*)",
-      "destination": "/index.html"
+      "src": "/(favicon.png|favicon.ico)",
+      "dest": "/$1"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/index.html"
     }
   ]
 }
